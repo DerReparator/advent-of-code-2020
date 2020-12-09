@@ -3,7 +3,7 @@ from collections import defaultdict
 day7_input = None
 
 input_path = "input/day07_1.input"
-# input_path = "input/day07_1_test.input"
+#input_path = "input/day07_2_test.input"
 
 # read input
 with open(input_path, 'r') as inp_file:
@@ -12,7 +12,6 @@ with open(input_path, 'r') as inp_file:
 
 bag_rules = {}
 bag_is_contained_in = defaultdict(list)
-contains_shiny_gold = set() # The length of this set will be the solution
 
 def parse_color(first_part: str, second_part: str):
     return first_part + " " + second_part
@@ -46,14 +45,14 @@ for idx, color_name in enumerate(bag_is_contained_in):
 
 
 # now query the rules with shiny gold
-def traverse_up(color: str):
-    for container in bag_is_contained_in[color]:
-        if container not in contains_shiny_gold:
-            contains_shiny_gold.add(container)
-            traverse_up(container)
+total_amount = 0
+def traverse_down(color: str):
+    global total_amount
+    for amount, container in bag_rules[color]:
+        total_amount = total_amount + amount
+        for i in range(amount):
+            traverse_down(container)
 
-traverse_up("shiny gold")
+traverse_down("shiny gold")
 
-print(f"Solution: {len(contains_shiny_gold)}")
-for bag in sorted(contains_shiny_gold):
-    print(bag)
+print(f"Solution: {total_amount}")
